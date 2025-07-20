@@ -1,6 +1,6 @@
 # Sistem Informasi BKK
 
-Ini adalah aplikasi web untuk mengelola Bursa Kerja Khusus (BKK) pada sebuah sekolah.
+Ini adalah aplikasi web untuk mengelola Bursa Kerja Khusus (BKK) pada sebuah sekolah dengan menggunakan php native.
 
 ## Fitur
 - Manajemen lowongan kerja
