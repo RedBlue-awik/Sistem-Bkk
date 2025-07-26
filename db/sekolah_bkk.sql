@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 20 Jul 2025 pada 14.32
+-- Waktu pembuatan: 26 Jul 2025 pada 15.35
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.2.12
 
@@ -88,8 +88,9 @@ CREATE TABLE `lamaran` (
 --
 
 INSERT INTO `lamaran` (`id_lamaran`, `id_siswa`, `id_lowongan`, `tanggal_lamar`, `status`) VALUES
-(20, 7, 29, '2025-06-22', 'Tidak Diterima Kerja'),
-(24, 7, 53, '2025-07-05', 'Tidak Diterima Kerja');
+(26, 8, 70, '2025-07-25', 'Diterima Kerja'),
+(27, 8, 69, '2025-07-25', 'Tidak Diterima Kerja'),
+(28, 7, 69, '2025-07-26', 'Tidak Diterima Kerja');
 
 -- --------------------------------------------------------
 
@@ -113,7 +114,9 @@ CREATE TABLE `lowongan` (
 --
 
 INSERT INTO `lowongan` (`id_lowongan`, `id_perusahaan`, `judul`, `deskripsi`, `persyaratan`, `gaji`, `tanggal_dibuka`, `tanggal_ditutup`) VALUES
-(30, 2, 'Dev', 'Harus semangat', 'Lulusan IT,Bisa HTML CSS dan JS', 'Rp         2.500.000', '2025-06-01', '2025-06-25');
+(30, 2, 'Dev', 'Harus semangat', 'Lulusan IT,Bisa HTML CSS dan JS', 'Rp         2.500.000', '2025-06-01', '2025-06-25'),
+(69, 6, 'Kasir', 'Semangat Kerja', 'Harus Good Loking', 'Rp  1.000.000', '2025-07-25', '2025-08-01'),
+(70, 2, 'Dev', 'Tidak ada deskripsi', 'Jago Ngoding', 'Rp 10.000.000', '2025-07-25', '2025-07-26');
 
 -- --------------------------------------------------------
 
@@ -137,7 +140,15 @@ CREATE TABLE `pengumuman` (
 INSERT INTO `pengumuman` (`id_pengumuman`, `judul`, `isi`, `tanggal`, `ditujukan`, `id_siswa`) VALUES
 (1, 'Lowongan Dihapus', 'Lowongan <b>Web Dev</b> di perusahaan <b>PT Teknologi Indonesia</b> telah dihapus oleh admin.', '2025-07-18 17:32:53', 'semua', NULL),
 (2, 'Lowongan Dihapus', 'Lowongan <b>Market Digital</b> di perusahaan <b>Indomaret</b> telah dihapus oleh admin.', '2025-07-18 17:33:01', 'semua', NULL),
-(3, 'Lowongan Dihapus', 'Lowongan <b>Game Dev</b> di perusahaan <b>PT Teknologi Indonesia</b> telah dihapus oleh admin.', '2025-07-18 17:33:03', 'semua', NULL);
+(3, 'Lowongan Dihapus', 'Lowongan <b>Game Dev</b> di perusahaan <b>PT Teknologi Indonesia</b> telah dihapus oleh admin.', '2025-07-18 17:33:03', 'semua', NULL),
+(4, 'Lowongan Baru Dibuka', 'Telah dibuka Lowongan baru di Perusahaan <b>Indomaret</b> dengan Judul : <b>Kasir</b>.', '2025-07-20 19:35:07', 'semua', NULL),
+(5, 'Lowongan Dihapus', 'Lowongan <b>Kasir</b> di perusahaan <b>Indomaret</b> telah dihapus oleh admin.', '2025-07-25 08:05:39', 'semua', NULL),
+(6, 'Lowongan Baru (Segera Dibuka)', 'Lowongan <b>Kasir</b> di perusahaan <b>Indomaret</b> akan dibuka <b>1 hari lagi</b> pada tanggal <b>2025-07-26</b>.', '2025-07-25 08:06:45', 'semua', NULL),
+(7, 'Lowongan Baru Dibuka', 'Telah dibuka Lowongan baru di Perusahaan <b>PT Teknologi Indonesia</b> dengan Judul : <b>Dev</b>.', '2025-07-25 08:21:51', 'semua', NULL),
+(8, 'Selamat! Lamaran Diterima', 'Lamaran anda untuk posisi <b>Dev</b> telah <b>DITERIMA</b>.', '2025-07-25 08:25:53', 'khusus', 8),
+(9, 'Maaf, Lamaran Tidak Diterima', 'Lamaran anda untuk posisi <b>Kasir</b> <b>TIDAK DITERIMA</b>.', '2025-07-25 08:27:15', 'khusus', 8),
+(22, 'Loker Dev Telah Berakhir', 'Lowongan kerja <b>Dev</b> di perusahaan <b>PT Teknologi Indonesia</b> telah berakhir hari ini.', '2025-07-26 19:47:29', 'semua', NULL),
+(23, 'Maaf, Lamaran Tidak Diterima', 'Lamaran anda untuk posisi <b>Kasir</b> <b>TIDAK DITERIMA</b>.', '2025-07-26 20:33:20', 'khusus', 7);
 
 -- --------------------------------------------------------
 
@@ -169,7 +180,25 @@ INSERT INTO `pengumuman_viewed` (`id`, `id_pengumuman`, `id_user`, `id_siswa`, `
 (9, 3, 40, 8, '2025-07-20 18:43:36'),
 (10, 1, 42, 10, '2025-07-20 18:44:05'),
 (11, 2, 42, 10, '2025-07-20 18:44:05'),
-(12, 3, 42, 10, '2025-07-20 18:44:05');
+(12, 3, 42, 10, '2025-07-20 18:44:05'),
+(19, 4, 35, NULL, '2025-07-20 19:36:02'),
+(23, 4, 38, 7, '2025-07-20 19:36:10'),
+(27, 4, 40, 8, '2025-07-25 07:11:50'),
+(48, 5, 35, NULL, '2025-07-25 08:06:47'),
+(49, 6, 35, NULL, '2025-07-25 08:06:47'),
+(56, 7, 35, NULL, '2025-07-25 08:22:03'),
+(61, 5, 40, 8, '2025-07-25 08:22:32'),
+(62, 6, 40, 8, '2025-07-25 08:22:32'),
+(63, 7, 40, 8, '2025-07-25 08:22:32'),
+(78, 8, 40, 8, '2025-07-25 13:47:25'),
+(79, 9, 40, 8, '2025-07-25 13:47:25'),
+(114, 22, 35, NULL, '2025-07-26 19:47:33'),
+(124, 22, 40, 8, '2025-07-26 19:48:46'),
+(129, 5, 38, 7, '2025-07-26 20:24:54'),
+(130, 6, 38, 7, '2025-07-26 20:24:54'),
+(131, 7, 38, 7, '2025-07-26 20:24:55'),
+(132, 22, 38, 7, '2025-07-26 20:24:55'),
+(141, 23, 38, 7, '2025-07-26 20:33:25');
 
 -- --------------------------------------------------------
 
@@ -300,25 +329,25 @@ ALTER TABLE `alumni`
 -- AUTO_INCREMENT untuk tabel `lamaran`
 --
 ALTER TABLE `lamaran`
-  MODIFY `id_lamaran` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id_lamaran` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT untuk tabel `lowongan`
 --
 ALTER TABLE `lowongan`
-  MODIFY `id_lowongan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+  MODIFY `id_lowongan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
 -- AUTO_INCREMENT untuk tabel `pengumuman`
 --
 ALTER TABLE `pengumuman`
-  MODIFY `id_pengumuman` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_pengumuman` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT untuk tabel `pengumuman_viewed`
 --
 ALTER TABLE `pengumuman_viewed`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=142;
 
 --
 -- AUTO_INCREMENT untuk tabel `perusahaan`

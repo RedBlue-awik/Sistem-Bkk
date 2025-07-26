@@ -426,7 +426,7 @@ function uploadLogoPerusahaan()
 	$tmpName = $_FILES['logo']['tmp_name'];
 
 	// Cek apakah yang di upload gambar atau bukan
-	
+
 	// Buat array yang berisi ekstensi file yang diperbolehkan
 	$ekstensiGambarValid = ["jpg", "jpeg", "png"];
 	$ekstensiGambar = explode('.', $namaFile);
@@ -563,39 +563,54 @@ function tambahLoker($data)
 }
 
 // Pengumuman loker berakhir
-function cekDanPengumumanLokerBerakhir()
+function cekPengumumanLokerBerakhir()
 {
     global $conn;
     $today = date('Y-m-d');
     $query = "SELECT * FROM lowongan WHERE tanggal_ditutup = '$today'";
     $result = mysqli_query($conn, $query);
+
     while ($row = mysqli_fetch_assoc($result)) {
-        $judul_pengumuman = "Loker Berakhir: " . $row['judul'];
-        $isi_pengumuman = "Lowongan kerja <b>{$row['judul']}</b> di perusahaan ID {$row['id_perusahaan']} telah berakhir hari ini.";
-        tambahPengumuman($judul_pengumuman, $isi_pengumuman, 'semua', null);
+        $id_perusahaan = $row['id_perusahaan'];
+        $judul_loker = $row['judul'];
+
+        // Ambil nama perusahaan sesuai id_perusahaan loker
+        $nama_perusahaan = '';
+        $res = mysqli_query($conn, "SELECT nama_perusahaan FROM perusahaan WHERE id_perusahaan = '$id_perusahaan'");
+        if ($perusahaan = mysqli_fetch_assoc($res)) {
+            $nama_perusahaan = $perusahaan['nama_perusahaan'];
+        }
+
+        // Cek apakah pengumuman sudah pernah dibuat hari ini untuk loker ini
+        $judul_pengumuman = "Loker $judul_loker Telah Berakhir";
+        $cek = mysqli_query($conn, "SELECT 1 FROM pengumuman WHERE judul = '$judul_pengumuman' AND DATE(tanggal) = '$today'");
+        if (!mysqli_fetch_assoc($cek)) {
+            $isi_pengumuman = "Lowongan kerja <b>$judul_loker</b> di perusahaan <b>$nama_perusahaan</b> telah berakhir hari ini.";
+            tambahPengumuman($judul_pengumuman, $isi_pengumuman, 'semua', null);
+        }
     }
 }
 
 // Function Logika Edit Perusahaan
 function editLoker($data)
 {
-    global $conn;
+	global $conn;
 
-    $id_lowongan = htmlspecialchars($data['id_lowongan']);
-    $judul = htmlspecialchars($data['judul']);
-    $deskripsi = htmlspecialchars($data['deskripsi']);
-    $mata_uang = htmlspecialchars($data['mata_uang']);
-    $gaji = htmlspecialchars($data['gaji']);
-    $gaji_full = $mata_uang . ' ' . $gaji;
-    $tanggal_dibuka = htmlspecialchars($data['tanggal_dibuka']);
-    $tanggal_ditutup = htmlspecialchars($data['tanggal_ditutup']);
-    $id_perusahaan = htmlspecialchars($data['perusahaan']);
+	$id_lowongan = htmlspecialchars($data['id_lowongan']);
+	$judul = htmlspecialchars($data['judul']);
+	$deskripsi = htmlspecialchars($data['deskripsi']);
+	$mata_uang = htmlspecialchars($data['mata_uang']);
+	$gaji = htmlspecialchars($data['gaji']);
+	$gaji_full = $mata_uang . ' ' . $gaji;
+	$tanggal_dibuka = htmlspecialchars($data['tanggal_dibuka']);
+	$tanggal_ditutup = htmlspecialchars($data['tanggal_ditutup']);
+	$id_perusahaan = htmlspecialchars($data['perusahaan']);
 
-	$persyaratan = isset($data['persyaratan']) && is_array($data['persyaratan']) 
-    ? implode(',', $data['persyaratan']) 
-    : 'Tidak ada persyaratan';
+	$persyaratan = isset($data['persyaratan']) && is_array($data['persyaratan'])
+		? implode(',', $data['persyaratan'])
+		: 'Tidak ada persyaratan';
 
-    $query = "UPDATE lowongan SET 
+	$query = "UPDATE lowongan SET 
               judul = '$judul', 
               deskripsi = '$deskripsi', 
               persyaratan = '$persyaratan', 
@@ -604,35 +619,35 @@ function editLoker($data)
               tanggal_ditutup = '$tanggal_ditutup', 
               id_perusahaan = '$id_perusahaan' 
               WHERE id_lowongan = $id_lowongan";
-    mysqli_query($conn, $query);
+	mysqli_query($conn, $query);
 
-    return mysqli_affected_rows($conn);
+	return mysqli_affected_rows($conn);
 }
 // Function Logika Hapus loker
 function hapusLoker($id)
 {
 	global $conn;
 
-    // Ambil data loker sebelum dihapus
-    $loker = mysqli_fetch_assoc(mysqli_query($conn, "SELECT judul, id_perusahaan FROM lowongan WHERE id_lowongan = $id"));
-    $judul_loker = $loker['judul'] ?? '';
-    $id_perusahaan = $loker['id_perusahaan'] ?? 0;
-    $nama_perusahaan = '';
-    if ($id_perusahaan) {
-        $perusahaan = mysqli_fetch_assoc(mysqli_query($conn, "SELECT nama_perusahaan FROM perusahaan WHERE id_perusahaan = $id_perusahaan"));
-        $nama_perusahaan = $perusahaan['nama_perusahaan'] ?? '';
-    }
+	// Ambil data loker sebelum dihapus
+	$loker = mysqli_fetch_assoc(mysqli_query($conn, "SELECT judul, id_perusahaan FROM lowongan WHERE id_lowongan = $id"));
+	$judul_loker = $loker['judul'] ?? '';
+	$id_perusahaan = $loker['id_perusahaan'] ?? 0;
+	$nama_perusahaan = '';
+	if ($id_perusahaan) {
+		$perusahaan = mysqli_fetch_assoc(mysqli_query($conn, "SELECT nama_perusahaan FROM perusahaan WHERE id_perusahaan = $id_perusahaan"));
+		$nama_perusahaan = $perusahaan['nama_perusahaan'] ?? '';
+	}
 
 	// Jalankan query hapus data dari database
 	mysqli_query($conn, "DELETE FROM lowongan WHERE id_lowongan = $id");
 
-    // Tambahkan pengumuman jika loker dihapus
-    if ($judul_loker) {
-        $judul_pengumuman = "Lowongan Dihapus";
-        $isi_pengumuman = "Lowongan <b>$judul_loker</b>" . ($nama_perusahaan ? " di perusahaan <b>$nama_perusahaan</b>" : "") . " telah dihapus oleh admin.";
-      // Hapus field keterangan karena tidak ada di tabel
-        tambahPengumuman($judul_pengumuman, $isi_pengumuman, 'semua', null);
-    }
+	// Tambahkan pengumuman jika loker dihapus
+	if ($judul_loker) {
+		$judul_pengumuman = "Lowongan Dihapus";
+		$isi_pengumuman = "Lowongan <b>$judul_loker</b>" . ($nama_perusahaan ? " di perusahaan <b>$nama_perusahaan</b>" : "") . " telah dihapus oleh admin.";
+		// Hapus field keterangan karena tidak ada di tabel
+		tambahPengumuman($judul_pengumuman, $isi_pengumuman, 'semua', null);
+	}
 
 	return mysqli_affected_rows($conn);
 }
@@ -657,49 +672,49 @@ function hapusLamaran($id)
 // Function Logika Set Status / Ubah Status
 function setStatusLamaran($data)
 {
-    global $conn;
+	global $conn;
 
-    $id_lamaran = htmlspecialchars($data['id_lamaran']);
-    $status = htmlspecialchars($data['status']);
+	$id_lamaran = htmlspecialchars($data['id_lamaran']);
+	$status = htmlspecialchars($data['status']);
 
-    $query = "UPDATE lamaran SET status = '$status' WHERE id_lamaran = $id_lamaran";
-    mysqli_query($conn, $query);
+	$query = "UPDATE lamaran SET status = '$status' WHERE id_lamaran = $id_lamaran";
+	mysqli_query($conn, $query);
 
-    // Ambil info lamaran untuk pengumuman
-    $lamaran = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM lamaran WHERE id_lamaran = $id_lamaran"));
-    $lowongan = mysqli_fetch_assoc(mysqli_query($conn, "SELECT judul FROM lowongan WHERE id_lowongan = {$lamaran['id_lowongan']}"));
+	// Ambil info lamaran untuk pengumuman
+	$lamaran = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM lamaran WHERE id_lamaran = $id_lamaran"));
+	$lowongan = mysqli_fetch_assoc(mysqli_query($conn, "SELECT judul FROM lowongan WHERE id_lowongan = {$lamaran['id_lowongan']}"));
 
-    // Pastikan id_siswa adalah id_alumni (bukan id_user)
-    $id_siswa = intval($lamaran['id_siswa']);
+	// Pastikan id_siswa adalah id_alumni (bukan id_user)
+	$id_siswa = intval($lamaran['id_siswa']);
 
-    // Pengumuman hanya untuk status Diterima Kerja atau Tidak Diterima Kerja
-    if ($status == 'Diterima Kerja') {
-        $judul_pengumuman = "Selamat! Lamaran Diterima";
-        $isi_pengumuman = "Lamaran anda untuk posisi <b>{$lowongan['judul']}</b> telah <b>DITERIMA</b>.";
-        tambahPengumuman($judul_pengumuman, $isi_pengumuman, 'khusus', $id_siswa);
-    } else if ($status == 'Tidak Diterima Kerja') {
-        $judul_pengumuman = "Maaf, Lamaran Tidak Diterima";
-        $isi_pengumuman = "Lamaran anda untuk posisi <b>{$lowongan['judul']}</b> <b>TIDAK DITERIMA</b>.";
-        tambahPengumuman($judul_pengumuman, $isi_pengumuman, 'khusus', $id_siswa);
-    }
+	// Pengumuman hanya untuk status Diterima Kerja atau Tidak Diterima Kerja
+	if ($status == 'Diterima Kerja') {
+		$judul_pengumuman = "Selamat! Lamaran Diterima";
+		$isi_pengumuman = "Lamaran anda untuk posisi <b>{$lowongan['judul']}</b> telah <b>DITERIMA</b>.";
+		tambahPengumuman($judul_pengumuman, $isi_pengumuman, 'khusus', $id_siswa);
+	} else if ($status == 'Tidak Diterima Kerja') {
+		$judul_pengumuman = "Maaf, Lamaran Tidak Diterima";
+		$isi_pengumuman = "Lamaran anda untuk posisi <b>{$lowongan['judul']}</b> <b>TIDAK DITERIMA</b>.";
+		tambahPengumuman($judul_pengumuman, $isi_pengumuman, 'khusus', $id_siswa);
+	}
 
-    return mysqli_affected_rows($conn);
+	return mysqli_affected_rows($conn);
 }
 
 function tambahPengumuman($judul, $isi, $ditujukan = 'semua', $id_siswa = null)
 {
-    global $conn;
-    date_default_timezone_set('Asia/Jakarta');
-    $judul = mysqli_real_escape_string($conn, $judul);
-    $isi = mysqli_real_escape_string($conn, $isi);
-    $tanggal = date('Y-m-d H:i:s');
-    $ditujukan = ($ditujukan == 'khusus') ? 'khusus' : 'semua';
-    $id_siswa_sql = ($id_siswa !== null) ? intval($id_siswa) : 'NULL';
-    $query = "INSERT INTO pengumuman (judul, isi, tanggal, ditujukan, id_siswa) VALUES ('$judul', '$isi', '$tanggal', '$ditujukan', $id_siswa_sql)";
-    mysqli_query($conn, $query);
-    return mysqli_affected_rows($conn);
+	global $conn;
+	date_default_timezone_set('Asia/Jakarta');
+	$judul = mysqli_real_escape_string($conn, $judul);
+	$isi = mysqli_real_escape_string($conn, $isi);
+	$tanggal = date('Y-m-d H:i:s');
+	$ditujukan = ($ditujukan == 'khusus') ? 'khusus' : 'semua';
+	$id_siswa_sql = ($id_siswa !== null) ? intval($id_siswa) : 'NULL';
+	$query = "INSERT INTO pengumuman (judul, isi, tanggal, ditujukan, id_siswa) VALUES ('$judul', '$isi', '$tanggal', '$ditujukan', $id_siswa_sql)";
+	mysqli_query($conn, $query);
+	return mysqli_affected_rows($conn);
 
-    mysqli_query($conn, $query);
-    return mysqli_affected_rows($conn);
+	mysqli_query($conn, $query);
+	return mysqli_affected_rows($conn);
 }
 // End Function Data Lamaran Alumni

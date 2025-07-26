@@ -4,7 +4,7 @@
         <!--begin::Brand Link-->
         <a href="index.php" class="brand-link ms-2">
             <!--begin::Brand Image-->
-            <img src="http://localhost/sistem_bkk/src/assets/img/logo.png" alt="SMK MI Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+            <img src="../../src/assets/img/logo.png" alt="SMK MI Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
             <!--end::Brand Image-->
 
             <span class="brand-text font-weight-bold ">SMK MI</span>
@@ -29,7 +29,12 @@
                             <p>Dashboard</p>
                         </a>
                     </li>
-
+                    <li class="nav-item">
+                        <a href="chart.php" class="nav-link ">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <p>Statistic</p>
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a href="#" class="nav-link mt-2">
                             <i class="bi bi-menu-button-wide-fill"></i>
@@ -130,6 +135,12 @@
                         <a href="index.php" class="nav-link ">
                             <i class="bi bi-speedometer"></i>
                             <p>Dashboard</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="chart.php" class="nav-link ">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <p>Statistic</p>
                         </a>
                     </li>
                     <li class="nav-item">

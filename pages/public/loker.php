@@ -155,9 +155,17 @@ include '../../src/template/headers.php'
         font-family: "Poppins", sans-serif;
     }
 
-    /* Konten centering: no offset on mobile, offset on desktop */
+    /*K onten centering: no offset on mobile, offset on desktop */
     .content {
         padding: 1.5rem;
+    }
+
+    @media (max-width: 1330px) {
+        .loker-card,
+        .loker-card-admin {
+            flex: 0 0 50%;
+            max-width: 50%;
+        }
     }
 
     @media (min-width: 768px) {
@@ -168,7 +176,7 @@ include '../../src/template/headers.php'
 
     /* Container inside content always centered */
     .content .container {
-        max-width: 1140px;
+        max-width: 1260px;
         margin: 0 auto;
     }
 
@@ -224,7 +232,12 @@ include '../../src/template/headers.php'
         justify-content: end;
     }
 
-    @media (max-width: 576px) {
+    @media (max-width: 705px) {
+        .loker-card,
+        .loker-card-admin {
+            flex: 100%;
+            max-width: 100%;
+        }
         .pagination-lg .page-link {
             font-size: .95rem;
             padding: 0.4rem .85rem;
@@ -681,7 +694,7 @@ include '../../src/template/headers.php'
                                             <?php foreach ($loker['persyaratan'] as $index => $persyaratan) : ?>
                                                 <div class="input-group mb-2" id="persyaratan-item-<?= $index; ?>">
                                                     <input type="text" name="persyaratan[]" class="form-control" value="<?= trim($persyaratan); ?>" placeholder="Tulis Persyaratan" required>
-                                                    <button type="button" class="btn btn-danger" onclick="removePersyaratan(<?= $index; ?>)">Hapus</button>
+                                                    <button type="button" class="btn btn-danger" onclick="removePersyaratan(this)">Hapus</button>
                                                 </div>
                                             <?php endforeach; ?>
                                         </div>
@@ -821,7 +834,7 @@ include '../../src/template/headers.php'
             newInput.id = `persyaratan-item-${index}`;
             newInput.innerHTML = `
         <input type="text" name="persyaratan[]" class="form-control" placeholder="Tulis Persyaratan" required>
-        <button type="button" class="btn btn-danger" onclick="removePersyaratan(${index})">Hapus</button>
+        <button type="button" class="btn btn-danger" onclick="removePersyaratan(this)">Hapus</button>
     `;
 
             list.appendChild(newInput);

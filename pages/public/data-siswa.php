@@ -312,8 +312,7 @@ include '../../src/template/headers.php';
                                         Tambah Data
                                     </button>
                                     <?php else : ?>
-                                    <!-- Tombol LaporBugs -->
-                                     <button type="button" class="btn btn-light float-end rounded-circle" data-bs-trigger="hover" data-bs-placement="top" data-bs-custom-class="custom-tooltip-Bugs" data-bs-title="Lapor Bug ( Akan Datang )"><i class="fa-solid fa-bug"></i></button>
+                                     <i class="fa-solid fa-users-between-lines float-end mt-2 fs-4"></i>
                                     <?php endif; ?>
                                 </div>
                                 <div class="card-body">

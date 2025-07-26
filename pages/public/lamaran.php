@@ -46,7 +46,10 @@ if (isset($_POST['edit'])) {
     }
 }
 
-$query = mysqli_query($conn, "
+$level = $_SESSION['level'];
+$id_user = $_SESSION['id_pengguna'];
+if ($level == 'admin') {
+    $query = mysqli_query($conn, "
     SELECT lamaran.*, 
            alumni.nama AS nama_siswa,
            lowongan.judul AS judul_lowongan, 
@@ -59,6 +62,29 @@ $query = mysqli_query($conn, "
     JOIN lowongan ON lamaran.id_lowongan = lowongan.id_lowongan
     JOIN perusahaan ON lowongan.id_perusahaan = perusahaan.id_perusahaan
 ");
+} else {
+    $result = mysqli_query($conn, "
+    SELECT id_alumni FROM alumni
+        INNER JOIN user ON alumni.kode_alumni = user.kode_pengguna
+        WHERE user.id_user = $id_user
+        ");
+    $row = mysqli_fetch_assoc($result);
+    $id_alumni = $row['id_alumni'];
+    $query = mysqli_query($conn, "
+    SELECT lamaran.*, 
+           alumni.nama AS nama_siswa,
+           lowongan.judul AS judul_lowongan, 
+           lowongan.gaji, 
+           lowongan.tanggal_ditutup,
+           perusahaan.nama_perusahaan,
+           perusahaan.bidang_usaha
+    FROM lamaran
+    JOIN alumni ON lamaran.id_siswa = alumni.id_alumni
+    JOIN lowongan ON lamaran.id_lowongan = lowongan.id_lowongan
+    JOIN perusahaan ON lowongan.id_perusahaan = perusahaan.id_perusahaan
+    WHERE lamaran.id_siswa = $id_alumni
+");
+}
 
 // Ambil semua data lamaran ke array
 $dataLamaran = [];
@@ -252,9 +278,11 @@ include '../../src/template/headers.php';
                                                             <?php endif; ?>
                                                         </td>
                                                         <td class="text-nowrap align-items-center">
-                                                            <a href="" class="btn btn-sm btn-info text-white mb-1" style="padding-left: .4rem; padding-right: .3rem;" data-bs-toggle="modal" data-bs-target="#modalStatus<?= $row['id_lamaran']; ?>" data-bs-trigger="hover" data-bs-placement="top" data-bs-custom-class="custom-tooltip-User" data-bs-title="Set Status">
-                                                                <i class="fas fa-user-tag"></i>
-                                                            </a>
+                                                            <?php if ($level == 'admin') : ?>
+                                                                <a href="" class="btn btn-sm btn-info text-white mb-1" style="padding-left: .4rem; padding-right: .3rem;" data-bs-toggle="modal" data-bs-target="#modalStatus<?= $row['id_lamaran']; ?>" data-bs-trigger="hover" data-bs-placement="top" data-bs-custom-class="custom-tooltip-User" data-bs-title="Set Status">
+                                                                    <i class="fas fa-user-tag"></i>
+                                                                </a>
+                                                            <?php endif; ?>
 
                                                             <a href="../../src/config/hapus-datalamaran.php?id=<?= $row['id_lamaran']; ?>" class="btn btn-sm btn-danger btn-hapus mb-1" data-bs-trigger="hover" data-bs-placement="bottom" data-bs-custom-class="custom-tooltip-Delete" data-bs-title="Delete ( Hapus )">
                                                                 <i class="fas fa-trash"></i>
@@ -392,14 +420,14 @@ include '../../src/template/headers.php';
         // Optional: Reset active state when modal is closed
         document.addEventListener('DOMContentLoaded', function() {
             <?php foreach ($dataLamaran as $row): ?>
-            var modal = document.getElementById('modalStatus<?= $row["id_lamaran"]; ?>');
-            if (modal) {
-                modal.addEventListener('hidden.bs.modal', function () {
-                    document.getElementById('btn-diterima-<?= $row["id_lamaran"]; ?>').classList.remove('active');
-                    document.getElementById('btn-tidak-<?= $row["id_lamaran"]; ?>').classList.remove('active');
-                    document.getElementById('statusInput<?= $row["id_lamaran"]; ?>').value = '';
-                });
-            }
+                var modal = document.getElementById('modalStatus<?= $row["id_lamaran"]; ?>');
+                if (modal) {
+                    modal.addEventListener('hidden.bs.modal', function() {
+                        document.getElementById('btn-diterima-<?= $row["id_lamaran"]; ?>').classList.remove('active');
+                        document.getElementById('btn-tidak-<?= $row["id_lamaran"]; ?>').classList.remove('active');
+                        document.getElementById('statusInput<?= $row["id_lamaran"]; ?>').value = '';
+                    });
+                }
             <?php endforeach; ?>
         });
     </script>
@@ -476,7 +504,7 @@ include '../../src/template/headers.php';
     </script>
 
     <script>
-       
+
     </script>
 
     <!-- End::Script -->

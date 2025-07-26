@@ -94,8 +94,8 @@
             --bs-tooltip-color: #ffff;
         }
 
-        .custom-tooltip-Bugs {
-            --bs-tooltip-bg: #257a3c;
+        .custom-tooltip-Spin {
+            --bs-tooltip-bg: #7d4109ff;
             --bs-tooltip-color: #ffff;
         }
 

@@ -24,6 +24,8 @@ if ($_SESSION['level'] == 'alumni') {
     }
 }
 
+$cek = cekPengumumanLokerBerakhir();
+
 $pengumuman = [];
 $q = mysqli_query($conn, "
     SELECT * FROM pengumuman
@@ -69,11 +71,21 @@ foreach ($pengumuman as $p) {
         .notification-badge {
             animation: pulse 1.5s infinite;
         }
+
         @keyframes pulse {
-            0% { transform: scale(1);}
-            50% { transform: scale(1.2);}
-            100% { transform: scale(1);}
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
+
         @media (max-width: 768px) {
             .judul {
                 font-size: .94rem;
@@ -86,43 +98,61 @@ foreach ($pengumuman as $p) {
             .isi {
                 font-size: .85rem;
             }
+
             .btn-C {
                 font-size: .8rem;
             }
         }
 
-        @media (max-width: 576px){
+        @media (max-width: 576px) {
             .judul {
                 font-size: .9rem;
             }
+
             .tgl {
                 font-size: .8rem;
             }
+
             .isi {
                 font-size: .82rem;
             }
+
             .btn-C {
                 font-size: .75rem;
             }
+
+            .badge-p {
+                font-size: .60rem;
+                width: 50px;
+            }
         }
 
-        @media (max-width: 535px){
+        @media (max-width: 535px) {
             .judul {
                 font-size: .7rem;
             }
+
             .tgl {
                 font-size: .65rem;
-                transform: translate(0,30%);
+                transform: translate(0, 19%);
             }
+
             .isi {
                 font-size: .67rem;
             }
+
             .btn-C {
                 font-size: .65rem;
+            }
+
+            .badge-p {
+                font-size: .55rem;
+                width: 45px;
             }
         }
     </style>
 </head>
+
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <!--begin::App Wrapper-->
     <div class="app-wrapper">
@@ -219,25 +249,43 @@ foreach ($pengumuman as $p) {
                         <div class="alert alert-info">Belum ada pengumuman.</div>
                     <?php else: ?>
                         <?php foreach ($pengumuman as $p): ?>
-                            <div class="card pengumuman-card position-relative">
-                                <div class="card-header bg-primary text-white position-relative align-items-center">
-                                    <strong class="judul"><?= htmlspecialchars($p['judul']) ?></strong>
-                                    <?php if ($p['ditujukan'] === 'khusus' && isset($p['id_siswa']) && $p['id_siswa'] == $id_siswa) : ?>
-                                        <span class="tgl float-end me-4">
-                                            <?= date('d-m-Y H:i', strtotime($p['tanggal'])) ?>
-                                        </span>
-                                        <a href="../../src/config/hapus-pengumuman.php?id=<?= $p['id_pengumuman']; ?>" class="btn-C btn btn-sm text-white position-absolute m-2" style="top: -10%; right: -1%;">
-                                            <i class="fas fa-x"></i>
-                                        </a>
-                                    <?php else: ?>
-                                        <span class="tgl float-end">
-                                            <?= date('d-m-Y H:i', strtotime($p['tanggal'])) ?>
-                                        </span>
-                                    <?php endif; ?>
-                                </div>
+                            <?php
+                            $warna = 'bg-secondary';
+                            if ($p['judul'] == 'Pengumuman Baru (Segera Dibuka)') {
+                                $warna = 'bg-info';
+                            } elseif ($p['judul'] == 'Lowongan Baru Dibuka') {
+                                $warna = 'bg-primary';
+                            } elseif ($p['judul'] == 'Lowongan Dihapus') {
+                                $warna = 'bg-danger';
+                            } elseif ($p['judul'] == 'Selamat! Lamaran Diterima') {
+                                $warna = 'bg-success';
+                            } elseif ($p['judul'] == 'Maaf, Lamaran Tidak Diterima') {
+                                $warna = 'bg-warning text-dark';
+                            }
 
-                                <div class="card-body">
-                                    <div class="isi"><?= $p['isi'] ?></div>
+                            $label = ($p['ditujukan'] === 'khusus') ? '<span class="badge badge-p bg-dark ms-2">Pribadi</span>' : '<span class="badge badge-p bg-light text-dark ms-2">Umum</span>';
+                            ?>
+                            <div class="card pengumuman-card shadow-sm border-0 position-relative">
+                                <div class="card-header <?= $warna ?> text-white d-flex mb-3 align-items-center" style="min-height: 56px;">
+                                    <div>
+                                        <strong class="judul"><?= htmlspecialchars($p['judul']) ?></strong>
+                                        <?= $label ?>
+                                    </div>
+                                    <div class="d-flex align-items-center p-2 ms-auto">
+                                        <span class="tgl me-2 text-white"><?= date('d-m-Y H:i', strtotime($p['tanggal'])) ?></span>
+                                        <?php if (
+                                            $p['ditujukan'] === 'khusus'
+                                            && isset($p['id_siswa'])
+                                            && $p['id_siswa'] == $id_siswa
+                                        ) : ?>
+                                            <a href="../../src/config/hapus-pengumuman.php?id=<?= $p['id_pengumuman']; ?>" class="btn-C btn btn-sm btn-outline-light ms-1" title="Hapus Pengumuman" style="padding:2px 6px;">
+                                                <i class="fas fa-x"></i>
+                                            </a>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="card-body bg-white rounded-bottom">
+                                    <div class="isi"><?= nl2br($p['isi']) ?></div>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -273,32 +321,33 @@ foreach ($pengumuman as $p) {
     <!--end::App Wrapper-->
     <?php include '../../src/template/footer.php'; ?>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const newPengumuman = <?= $new_pengumuman ?>;
-    // Pastikan badge sudah ada di DOM, jika belum tunggu sebentar
-    function updateBadge() {
-        var badge = document.getElementById('badgePengumuman');
-        if (badge) {
-            if (newPengumuman > 0) {
-                badge.classList.remove('d-none');
-                badge.textContent = newPengumuman;
-                badge.classList.add('notification-badge');
-                // Tandai sudah dilihat
-                fetch(window.location.pathname + '?viewed=true');
-            } else {
-                badge.classList.add('d-none');
-                badge.textContent = '0';
-                badge.classList.remove('notification-badge');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const newPengumuman = <?= $new_pengumuman ?>;
+            // Pastikan badge sudah ada di DOM, jika belum tunggu sebentar
+            function updateBadge() {
+                var badge = document.getElementById('badgePengumuman');
+                if (badge) {
+                    if (newPengumuman > 0) {
+                        badge.classList.remove('d-none');
+                        badge.textContent = newPengumuman;
+                        badge.classList.add('notification-badge');
+                        // Tandai sudah dilihat
+                        fetch(window.location.pathname + '?viewed=true');
+                    } else {
+                        badge.classList.add('d-none');
+                        badge.textContent = '0';
+                        badge.classList.remove('notification-badge');
+                    }
+                } else {
+                    // Coba lagi setelah 200ms jika badge belum ada
+                    setTimeout(updateBadge, 200);
+                }
             }
-        } else {
-            // Coba lagi setelah 200ms jika badge belum ada
-            setTimeout(updateBadge, 200);
-        }
-    }
-    updateBadge();
-});
-</script>
+            updateBadge();
+        });
+    </script>
 </body>
 <!--end::Body-->
+
 </html>
